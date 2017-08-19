@@ -1,5 +1,5 @@
 influx:
-  host: http://127.0.0.1:8086
+  host: http://influxdb:8086
   user: root
   password: root
   database: mydb

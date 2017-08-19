@@ -24,6 +24,11 @@ public class InfluxConfig {
   @PostConstruct
   public void init() {
     influxDB = InfluxDBFactory.connect(getINFLUXDB_HOST(), getINFLUXDB_PASS(), getINFLUXDB_PASS());
+    
+    if(!influxDB.databaseExists(getINFLUXDB_DB())){
+      influxDB.createDatabase(getINFLUXDB_DB());
+    }
+    
     influxDB.setDatabase(getINFLUXDB_DB());
   }
 

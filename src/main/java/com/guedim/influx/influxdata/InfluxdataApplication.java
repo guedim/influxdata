@@ -19,7 +19,7 @@ public class InfluxdataApplication {
   }
 
   @EventListener(ApplicationReadyEvent.class)
-  void contextRefreshedEvent() {
+  void writeInflux() {
     new Thread(() -> seno.influxSeno()).start();
     new Thread(() -> cpu.influxCpuDisk()).start();
   }

@@ -4,13 +4,6 @@
 #    export DOCKER_HOST=tcp://192.168.99.100:2376
 
 
-#FROM frolvlad/alpine-oraclejdk8:slim
-#MAINTAINER guedim@gmail.com
-#ADD influxdata-0.0.1-SNAPSHOT.jar app.jar
-#EXPOSE 8080
-#ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
-
-
 FROM openjdk:8-jdk-alpine
 VOLUME /tmp
 ADD target/influxdata-0.0.1-SNAPSHOT.jar  app.jar
