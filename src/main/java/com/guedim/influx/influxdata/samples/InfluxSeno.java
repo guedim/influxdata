@@ -1,4 +1,6 @@
-package com.guedim.influx.influxdata;
+package com.guedim.influx.influxdata.samples;
+
+import static com.guedim.influx.influxdata.utils.InfluxUtils.sleep;
 
 import java.util.concurrent.TimeUnit;
 
@@ -6,7 +8,7 @@ import org.influxdb.dto.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.guedim.influx.influxdata.InfluxUtils.sleep;
+import com.guedim.influx.influxdata.config.InfluxConfig;
 
 @Component
 public class InfluxSeno {
@@ -22,7 +24,7 @@ public class InfluxSeno {
               .addField("valor", Math.sin(Math.toRadians(i % 360))).build();
 
       influxConfig.getInfluxDB().write(senoPoint);
-      System.out.println("SENO:  Written point " + i);
+      System.out.println("SENO:  Written point " + senoPoint);
 
       sleep(300);
     }

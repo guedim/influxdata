@@ -1,4 +1,4 @@
-package com.guedim.influx.influxdata;
+package com.guedim.influx.influxdata.config;
 
 import javax.annotation.PostConstruct;
 

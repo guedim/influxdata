@@ -1,12 +1,14 @@
-package com.guedim.influx.influxdata;
+package com.guedim.influx.influxdata.samples;
 
-import static com.guedim.influx.influxdata.InfluxUtils.*;
+import static com.guedim.influx.influxdata.utils.InfluxUtils.*;
 
 import java.util.concurrent.TimeUnit;
 
 import org.influxdb.dto.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.guedim.influx.influxdata.config.InfluxConfig;
 
 @Component
 public class InfluxCpuDisk {
@@ -28,7 +30,7 @@ public class InfluxCpuDisk {
 
       influxConfig.getInfluxDB().write(cpuPoint);
       influxConfig.getInfluxDB().write(diskPoint);
-      System.out.println("CpuDisk:  Written point " + i);
+      System.out.println("CpuDisk:  Written point " + cpuPoint);
       sleep(500);
     }
   }

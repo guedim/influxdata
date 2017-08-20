@@ -1,6 +1,22 @@
+##
+#   Influx configuration
+##
 influx:
   host: http://influxdb:8086
   user: root
   password: root
   database: mydb
+
+##
+#   Gigaspaces configuration
+##  
+os:
+  space-locators: SONY-PC:8102
+  space-group: SONY-PC-813
   
+
+##
+#   Write data configuration
+##  
+cron:
+  expression: "*/10 * * * * *"
