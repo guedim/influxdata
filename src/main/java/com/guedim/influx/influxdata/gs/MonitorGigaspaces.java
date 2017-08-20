@@ -50,7 +50,7 @@ public class MonitorGigaspaces {
 
           Point jvmStatsPoint = Point.measurement(GIGASPACES_METRIC_NAME)
               .time(currentTimeMillis, TimeUnit.MILLISECONDS)
-              .tag("gsc-zone", zone)
+              .tag("    ", zone)
               .tag("machine", machine)
               .tag("jvm-version", jvmVersion)
               .tag("jvm-pid", jvmPid)
