@@ -35,7 +35,8 @@ services:
             
   # Define a service for using the influx CLI tool.
   spring-influx:
-    image: guedim/influxdata:0.0.1-SNAPSHOT
+    build:
+      context: .
     environment:
       INFLUXDB_URL: http://influxdb:8086
     ports: 
