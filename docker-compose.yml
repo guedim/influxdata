@@ -29,9 +29,6 @@ services:
       - influxdb
     environment:
       - GF_PATHS_DATA=/var/lib/grafana
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
             
   # Define a service for using the influx CLI tool.
   spring-influx:
