@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>influxdata</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Demo project for Influx</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -41,12 +41,14 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- Influxdb -->
+		
+		<!-- Chronos -->
 		<dependency>
-			<groupId>org.influxdb</groupId>
-			<artifactId>influxdb-java</artifactId>
-			<version>2.7</version>
+   			<groupId>com.payulatam</groupId>
+   			<artifactId>chronos</artifactId>
+   			<version>2.4.0</version>
 		</dependency>
+		
 		<!-- GigaSpaces Runtime -->
 		<dependency>
 			<groupId>com.gigaspaces</groupId>

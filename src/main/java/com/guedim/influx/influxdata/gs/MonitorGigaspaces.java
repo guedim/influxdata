@@ -1,9 +1,7 @@
 package com.guedim.influx.influxdata.gs;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import org.influxdb.dto.Point;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.vm.VirtualMachine;
@@ -12,7 +10,11 @@ import org.openspaces.admin.zone.Zone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.guedim.influx.influxdata.config.InfluxConfig;
+import com.guedim.influx.influxdata.utils.InfluxUtils;
+import com.payulatam.chronos.ChronoRecord;
+import com.payulatam.chronos.Chronos;
+import com.payulatam.chronos.Field;
+import com.payulatam.chronos.Tag;
 
 @Component
 public class MonitorGigaspaces {
@@ -22,15 +24,10 @@ public class MonitorGigaspaces {
   @Autowired
   private Admin admin;
 
-  @Autowired
-  private InfluxConfig influxConfig;
-
 
   public void writeGigaspacesData() {
 
     for (GridServiceContainer gsc : admin.getGridServiceContainers()) {
-
-      System.out.println("GSC [" + gsc.getUid() + "] running on Machine " + gsc.getMachine().getHostAddress() + " and Zone: " + getZone(gsc));
 
       long currentTimeMillis = System.currentTimeMillis();
       String zone = getZone(gsc);
@@ -48,29 +45,36 @@ public class MonitorGigaspaces {
         final VirtualMachineStatistics jvmStatistics = jvm.getStatistics();
         if (jvmStatistics != null) {
 
-          Point jvmStatsPoint = Point.measurement(GIGASPACES_METRIC_NAME)
-              .time(currentTimeMillis, TimeUnit.MILLISECONDS)
-              .tag("    ", zone)
-              .tag("machine", machine)
-              .tag("jvm-version", jvmVersion)
-              .tag("jvm-pid", jvmPid)
-              .addField("jvm-cpu", jvmStatistics.getCpuPercFormatted())
-              .addField("jvm-thread-numbers", jvmStatistics.getThreadCount())
+          Tag[] tags = new Tag [4];
+          tags[0] = new Tag("gsc-zone", zone);
+          tags[1] = new Tag("machine", machine);
+          tags[2] = new Tag("jvm-version", jvmVersion);
+          tags[3] = new Tag("jvm-pid", jvmPid);
+          
+          Field[] fields = new Field.Builder()
               
-              .addField("jvm-heap-memory-used-perc", jvmStatistics.getMemoryHeapUsedPerc())
-              .addField("jvm-heap-memory-used", jvmStatistics.getMemoryHeapUsedInMB())
-              .addField("jvm-heap-memory-committed", jvmStatistics.getMemoryHeapCommittedInMB())
-              .addField("jvm-max-heap-memory", jvmStatistics.getDetails().getMemoryHeapInitInMB())
+              .field("jvm-cpu", InfluxUtils.formatCpuPerc(jvmStatistics.getCpuPercFormatted()))
+              .field("jvm-thread-numbers", jvmStatistics.getThreadCount())
               
-              .addField("jvm-non-heap-memory-used", jvmStatistics.getMemoryNonHeapUsedInMB())
-              .addField("jvm-non-heap-memory-commited", jvmStatistics.getMemoryNonHeapCommittedInMB())
-              .addField("jvm-max-non-heap-memory", jvmStatistics.getDetails().getMemoryNonHeapMaxInMB())
+              .field("jvm-heap-memory-used-perc", jvmStatistics.getMemoryHeapUsedPerc())
+              .field("jvm-heap-memory-used", jvmStatistics.getMemoryHeapUsedInMB())
+              .field("jvm-heap-memory-committed", jvmStatistics.getMemoryHeapCommittedInMB())
+              .field("jvm-max-heap-memory", jvmStatistics.getDetails().getMemoryHeapMaxInMB())
               
-              
+              .field("jvm-non-heap-memory-used-perc", InfluxUtils.formatDouble(jvmStatistics.getMemoryNonHeapUsedPerc()))
+              .field("jvm-non-heap-memory-used", jvmStatistics.getMemoryNonHeapUsedInMB())
+              .field("jvm-non-heap-memory-commited", jvmStatistics.getMemoryNonHeapCommittedInMB())
+              .field("jvm-max-non-heap-memory",  InfluxUtils.formatDouble(jvmStatistics.getDetails().getMemoryNonHeapMaxInMB()))
               .build();
-
-          influxConfig.getInfluxDB().write(jvmStatsPoint);
-          System.out.println("Se escribió el punto:" + jvmStatsPoint);
+          
+          
+          System.out.println("cpu:" + InfluxUtils.formatCpuPerc(jvmStatistics.getCpuPercFormatted()));
+          System.out.println("non-heap-%:" + InfluxUtils.formatDouble(jvmStatistics.getMemoryNonHeapUsedPerc()));
+          System.out.println("max-non-heap:" + InfluxUtils.formatDouble(jvmStatistics.getDetails().getMemoryNonHeapMaxInMB()));
+          System.out.println("***********");
+          
+          ChronoRecord record = new ChronoRecord(null, GIGASPACES_METRIC_NAME, currentTimeMillis, currentTimeMillis, 0, null, 0L, tags, fields);
+          Chronos.record(record); 
         }
       }
     }

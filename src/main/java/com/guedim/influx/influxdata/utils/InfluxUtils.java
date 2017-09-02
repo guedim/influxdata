@@ -20,5 +20,26 @@ public final class InfluxUtils {
   public static int nexValue() {
     return random.nextInt(TO - FROM) + FROM;
   }
+  
+  public static Double formatCpuPerc(String cpuFormated) {  
+    try {
+       return Double.valueOf((cpuFormated.substring(0, cpuFormated.length()-1)))*100;  
+    } catch (Exception e) {
+      return 0D;
+    }
+  }
+  
+  public static Double formatDouble(Double plainNumber) {  
+    try {
+       return ((int)(plainNumber * 100.0d))/100.0d;  
+    } catch (Exception e) {
+      return 0D;
+    }
+  }
+  
 
+  
+  public static void main(String[] args) {
+    System.out.println(formatDouble(-2.790148E9));
+  }
 }

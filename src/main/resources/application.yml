@@ -19,4 +19,4 @@ os:
 #   Write data configuration
 ##  
 cron:
-  expression: "*/10 * * * * *"
+  expression: "*/1 * * * * *"
