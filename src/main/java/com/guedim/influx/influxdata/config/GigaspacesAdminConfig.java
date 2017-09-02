@@ -1,6 +1,3 @@
-/**
- * PayU Latam - Copyright (c) 2013 - 2014 http://www.payulatam.com Date: 8/10/2014
- */
 package com.guedim.influx.influxdata.config;
 
 import org.openspaces.admin.Admin;
@@ -11,13 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 
-/**
- * GigaSpaces Admin service implementation.
- * 
- * @author <a href="manuel.vieda@payulatam.com">Manuel E. Vieda</a>
- * @version 1.0
- * @since 4.5.8
- */
 @Configuration
 public class GigaspacesAdminConfig {
 

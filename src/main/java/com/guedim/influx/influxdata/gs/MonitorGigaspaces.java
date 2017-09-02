@@ -1,5 +1,6 @@
 package com.guedim.influx.influxdata.gs;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.openspaces.admin.Admin;
@@ -10,7 +11,6 @@ import org.openspaces.admin.zone.Zone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.guedim.influx.influxdata.utils.InfluxUtils;
 import com.payulatam.chronos.ChronoRecord;
 import com.payulatam.chronos.Chronos;
 import com.payulatam.chronos.Field;
@@ -53,7 +53,7 @@ public class MonitorGigaspaces {
           
           Field[] fields = new Field.Builder()
               
-              .field("jvm-cpu", InfluxUtils.formatCpuPerc(jvmStatistics.getCpuPercFormatted()))
+              .field("jvm-cpu", formatCpuPerc(jvmStatistics.getCpuPercFormatted()))
               .field("jvm-thread-numbers", jvmStatistics.getThreadCount())
               
               .field("jvm-heap-memory-used-perc", jvmStatistics.getMemoryHeapUsedPerc())
@@ -61,20 +61,15 @@ public class MonitorGigaspaces {
               .field("jvm-heap-memory-committed", jvmStatistics.getMemoryHeapCommittedInMB())
               .field("jvm-max-heap-memory", jvmStatistics.getDetails().getMemoryHeapMaxInMB())
               
-              .field("jvm-non-heap-memory-used-perc", InfluxUtils.formatDouble(jvmStatistics.getMemoryNonHeapUsedPerc()))
+              .field("jvm-non-heap-memory-used-perc", formatMemory(jvmStatistics.getMemoryNonHeapUsedPerc()))
               .field("jvm-non-heap-memory-used", jvmStatistics.getMemoryNonHeapUsedInMB())
               .field("jvm-non-heap-memory-commited", jvmStatistics.getMemoryNonHeapCommittedInMB())
-              .field("jvm-max-non-heap-memory",  InfluxUtils.formatDouble(jvmStatistics.getDetails().getMemoryNonHeapMaxInMB()))
+              .field("jvm-max-non-heap-memory",  formatDouble(jvmStatistics.getDetails().getMemoryNonHeapMaxInMB()))
               .build();
-          
-          
-          System.out.println("cpu:" + InfluxUtils.formatCpuPerc(jvmStatistics.getCpuPercFormatted()));
-          System.out.println("non-heap-%:" + InfluxUtils.formatDouble(jvmStatistics.getMemoryNonHeapUsedPerc()));
-          System.out.println("max-non-heap:" + InfluxUtils.formatDouble(jvmStatistics.getDetails().getMemoryNonHeapMaxInMB()));
-          System.out.println("***********");
           
           ChronoRecord record = new ChronoRecord(null, GIGASPACES_METRIC_NAME, currentTimeMillis, currentTimeMillis, 0, null, 0L, tags, fields);
           Chronos.record(record); 
+          System.out.println(record.toString());          
         }
       }
     }
@@ -87,5 +82,26 @@ public class MonitorGigaspaces {
       return zone.getValue() != null ? zone.getValue().getName() : zoneName;
     }
     return zoneName;
+  }
+
+  private static Double formatCpuPerc(String cpuFormated) {
+    try {
+      return Double.valueOf((cpuFormated.substring(0, cpuFormated.length() - 1))) * 100;
+    } catch (Exception e) {
+      return 0D;
+    }
+  }
+
+  private Double formatDouble(Double plainNumber) {
+    try {
+      return ((int) (plainNumber * 100.0d)) / 100.0d;
+    } catch (Exception e) {
+      return 0D;
+    }
+  }
+
+  private String formatMemory(final double value) {
+    final DecimalFormat decimalFormat = new DecimalFormat("###,###.00");
+    return decimalFormat.format(value);
   }
 }
